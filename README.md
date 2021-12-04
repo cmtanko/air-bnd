@@ -1,4 +1,10 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Air-BnD
+- An sample room booking app for your holiday
+
+## UI Mockup from
+- This website, uses free template from devias-io
+https://github.com/devias-io/material-kit-react 
+Its Awesome, thanks for that.Cheers !
 
 ## Getting Started
 
