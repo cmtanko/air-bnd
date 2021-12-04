@@ -1,15 +1,20 @@
 import Head from 'next/head';
-import { Box, Container, Grid, Pagination } from '@mui/material';
-import { products } from '../_Client/__mocks__/products';
-import { ProductListToolbar } from '../_Client/components/product/product-list-toolbar';
-import { ProductCard } from '../_Client/components/product/product-card';
+import { Box, Container, Grid } from '@mui/material';
+import { Budget } from '../_Client/components/dashboard/budget';
+import { LatestOrders } from '../_Client/components/dashboard/latest-orders';
+import { LatestProducts } from '../_Client/components/dashboard/latest-products';
+import { Sales } from '../_Client/components/dashboard/sales';
+import { TasksProgress } from '../_Client/components/dashboard/tasks-progress';
+import { TotalCustomers } from '../_Client/components/dashboard/total-customers';
+import { TotalProfit } from '../_Client/components/dashboard/total-profit';
+import { TrafficByDevice } from '../_Client/components/dashboard/traffic-by-device';
 import { DashboardLayout } from '../_Client/components/dashboard-layout';
 
-const Products = () => (
+const Dashboard = () => (
   <>
     <Head>
       <title>
-        Products | Material Kit
+        Anywhere - Stay - Air-bnd
       </title>
     </Head>
     <Box
@@ -20,47 +25,92 @@ const Products = () => (
       }}
     >
       <Container maxWidth={false}>
-        <ProductListToolbar />
-        <Box sx={{ pt: 3 }}>
-          <Grid
-            container
-            spacing={3}
-          >
-            {products.map((product) => (
-              <Grid
-                item
-                key={product.id}
-                lg={4}
-                md={6}
-                xs={12}
-              >
-                <ProductCard product={product} />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            pt: 3
-          }}
+        <Grid
+          container
+          spacing={3}
         >
-          <Pagination
-            color="primary"
-            count={3}
-            size="small"
-          />
-        </Box>
+          <Grid
+            item
+            lg={3}
+            sm={6}
+            xl={3}
+            xs={12}
+          >
+            <Budget />
+          </Grid>
+          <Grid
+            item
+            xl={3}
+            lg={3}
+            sm={6}
+            xs={12}
+          >
+            <TotalCustomers />
+          </Grid>
+          <Grid
+            item
+            xl={3}
+            lg={3}
+            sm={6}
+            xs={12}
+          >
+            <TasksProgress />
+          </Grid>
+          <Grid
+            item
+            xl={3}
+            lg={3}
+            sm={6}
+            xs={12}
+          >
+            <TotalProfit sx={{ height: '100%' }} />
+          </Grid>
+          <Grid
+            item
+            lg={8}
+            md={12}
+            xl={9}
+            xs={12}
+          >
+            <Sales />
+          </Grid>
+          <Grid
+            item
+            lg={4}
+            md={6}
+            xl={3}
+            xs={12}
+          >
+            <TrafficByDevice sx={{ height: '100%' }} />
+          </Grid>
+          <Grid
+            item
+            lg={4}
+            md={6}
+            xl={3}
+            xs={12}
+          >
+            <LatestProducts sx={{ height: '100%' }} />
+          </Grid>
+          <Grid
+            item
+            lg={8}
+            md={12}
+            xl={9}
+            xs={12}
+          >
+            <LatestOrders />
+          </Grid>
+        </Grid>
       </Container>
     </Box>
   </>
 );
 
-Products.getLayout = (page) => (
+Dashboard.getLayout = (page) => (
   <DashboardLayout>
     {page}
   </DashboardLayout>
 );
 
-export default Products;
+export default Dashboard;
