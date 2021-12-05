@@ -6,7 +6,7 @@ const dbConnect = () => {
   }
 
   mongoose
-    .connect(process.env.DB_LOCAL_URL, {
+    .connect(process.env.DB_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
