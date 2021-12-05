@@ -6,6 +6,7 @@ import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { createEmotionCache } from '../_Client/utils/create-emotion-cache';
 import { theme } from '../_Client/theme';
+import { wrapper } from "../_Client/redux/store";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -35,4 +36,4 @@ const App = (props) => {
   );
 };
 
-export default App;
+export default wrapper.withRedux(App);

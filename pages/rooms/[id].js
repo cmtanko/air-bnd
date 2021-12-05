@@ -1,11 +1,11 @@
 import Head from "next/head";
 import { Box, Container, Grid, Pagination } from "@mui/material";
-import { DashboardLayout } from "../_Client/components/dashboard-layout";
-import { getRooms } from "../_Client/redux/actions/roomsAction";
-import { wrapper } from "../_Client/redux/store";
-import RoomPage from "../_Client/components/room/RoomPage";
+import { DashboardLayout } from "../../_Client/components/dashboard-layout";
+import { getRoomDetails } from "../../_Client/redux/actions/roomsAction";
+import { wrapper } from "../../_Client/redux/store";
+import RoomDetailsPage from "../../_Client/components/room/RoomDetailsPage";
 
-const Products = () => (
+const RoomDetails = () => (
   <>
     <Head>
       <title>Hotels | Air-bnd</title>
@@ -17,17 +17,17 @@ const Products = () => (
         py: 8
       }}
     >
-      <RoomPage />
+      <RoomDetailsPage />
     </Box>
   </>
 );
 
-Products.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+RoomDetails.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
-export default Products;
+export default RoomDetails;
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => {
-  return async ({ req, query }) => {
+  return async ({ req, params }) => {
     // const session = await getSession({ req });
     // if (!session) {
     //   return {
@@ -38,6 +38,6 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => {
     //   };
     // }
 
-    await store.dispatch(getRooms(req, query.page, query.location));
+    await store.dispatch(getRoomDetails(req, params.id));
   };
 });

@@ -1,9 +1,9 @@
 import Head from "next/head";
 import { Box, Container, Grid, Pagination } from "@mui/material";
-import { DashboardLayout } from "../_Client/components/dashboard-layout";
-import { getRooms } from "../_Client/redux/actions/roomsAction";
-import { wrapper } from "../_Client/redux/store";
-import RoomPage from "../_Client/components/room/RoomPage";
+import { DashboardLayout } from "../../_Client/components/dashboard-layout";
+import { getRooms } from "../../_Client/redux/actions/roomsAction";
+import { wrapper } from "../../_Client/redux/store";
+import RoomPage from "../../_Client/components/room/RoomPage";
 
 const Products = () => (
   <>
