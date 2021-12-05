@@ -3,8 +3,8 @@ import ErrorHandler from "../../utils/errorHandler";
 import catchAsyncErrors from "../../middlewares/catchAsyncErrors";
 import APIFeatures from "../../utils/apiFeatures";
 
-const allRooms = catchAsyncErrors(async (req, res) => {
-  const resPerPage = 4;
+const allRooms = catchAsyncErrors(async (req, res, next) => {
+  const resPerPage = 6;
   const roomsCount = await Room.countDocuments();
 
   const apiFeatures = new APIFeatures(Room.find(), req.query).search().filter();
