@@ -11,7 +11,7 @@ const dbConnect = () => {
       useUnifiedTopology: true
     })
     .then((con) => console.log("Connected to local database"))
-    .catch((err) => console.error("Unable to Connect with MongoDB"));
+    .catch((err) => console.error("Unable to Connect with MongoDB" + err));
 };
 
 export default dbConnect;

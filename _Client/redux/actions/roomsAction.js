@@ -2,7 +2,9 @@ import axios from "axios";
 
 import { ACTION_TYPES } from "../constants/actionConstants";
 
-const origin = "http://localhost:3000";
+// const origin = process.env.ORIGIN_LOCAL;
+const origin = process.env.ORIGIN;
+
 
 export const getRooms =
   (req, page = 1, location = "") =>
