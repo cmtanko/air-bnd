@@ -2,7 +2,6 @@ import axios from "axios";
 
 import { ACTION_TYPES } from "../constants/actionConstants";
 
-// const origin = process.env.ORIGIN_LOCAL;
 const origin = process.env.ORIGIN;
 
 

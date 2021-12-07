@@ -14,6 +14,7 @@ import {
   TextField,
   InputAdornment,
   SvgIcon,
+  Item,
   Divider
 } from "@mui/material";
 import DatePicker from "react-datepicker";
@@ -76,72 +77,98 @@ const RoomDetailsPage = () => {
           </Typography>
         </Box>
       </Box>
-      <Card sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        <CardContent>
-          <CardMedia
-            component="img"
-            height="480"
-            image={room.images[0].url}
-            alt="hotels"
-          />
-          <Typography gutterBottom color="textPrimary" variant="h5">
-            Description
-          </Typography>
-          <Typography align="left" color="textPrimary" variant="body1">
-            {room.description}
-          </Typography>
-
-          <Typography gutterBottom color="textPrimary" variant="h5">
-            Features
-          </Typography>
-          <Typography align="left" color="textPrimary" variant="body1">
-            {room.guestCapacity} Guests
-          </Typography>
-          <Typography align="left" color="textPrimary" variant="body1">
-            {room.numOfBeds} Beds
-          </Typography>
-          <Typography align="left" color="textPrimary" variant="body1">
-            {room.breakfast ? "√" : "X"} Breakfast
-          </Typography>
-          <Typography align="left" color="textPrimary" variant="body1">
-            {room.internet ? "√" : "X"} Internet
-          </Typography>
-          <Typography align="left" color="textPrimary" variant="body1">
-            {room.airConditioned ? "√" : "X"} Air Conditioned
-          </Typography>
-          <Typography align="left" color="textPrimary" variant="body1">
-            {room.petsAllowed ? "√" : "X"} Pets Allowed
-          </Typography>
-          <Typography align="left" color="textPrimary" variant="body1">
-            {room.roomCleaning ? "√" : "X"} Room Cleaning
-          </Typography>
-        </CardContent>
-
-        <CardContent sx={{ width: "20%" }}>
-          <Typography gutterBottom color="textPrimary" variant="h7">
-            ${room.pricePerNight}/night
-          </Typography>
-          <Divider />
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <StaticDatePicker
-              orientation="portrait"
-              openTo="day"
-              value={value}
-              shouldDisableDate={isWeekend}
-              onChange={(newValue) => {
-                setValue(newValue);
-              }}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </LocalizationProvider>
-        </CardContent>
-
-        <CardContent>
-          <Typography gutterBottom color="textPrimary" variant="h5">
-            Reviews
-          </Typography>
-        </CardContent>
-      </Card>
+      <Grid container spacing={2}>
+        <Grid item lg={12} md={12} xs={12}>
+          <Card
+            sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
+            <CardContent>
+              <CardMedia
+                component="img"
+                height="480"
+                image={room.images[0].url}
+                alt="hotels"
+              />
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item lg={8} md={8} xs={12}>
+          <Card
+            sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
+            <CardContent>
+              <Typography gutterBottom color="textPrimary" variant="h5">
+                Description
+              </Typography>
+              <Divider />
+              <Typography
+                gutterBottom
+                align="left"
+                color="textPrimary"
+                variant="body1"
+              >
+                {room.description}
+              </Typography>
+              <Typography gutterBottom color="textPrimary" variant="h5">
+                Features
+              </Typography>
+              <Divider />
+              <Typography align="left" color="textPrimary" variant="body1">
+                {room.guestCapacity} Guests
+              </Typography>
+              <Typography align="left" color="textPrimary" variant="body1">
+                {room.numOfBeds} Beds
+              </Typography>
+              <Typography align="left" color="textPrimary" variant="body1">
+                {room.breakfast ? "√" : "X"} Breakfast
+              </Typography>
+              <Typography align="left" color="textPrimary" variant="body1">
+                {room.internet ? "√" : "X"} Internet
+              </Typography>
+              <Typography align="left" color="textPrimary" variant="body1">
+                {room.airConditioned ? "√" : "X"} Air Conditioned
+              </Typography>
+              <Typography align="left" color="textPrimary" variant="body1">
+                {room.petsAllowed ? "√" : "X"} Pets Allowed
+              </Typography>
+              <Typography align="left" color="textPrimary" variant="body1">
+                {room.roomCleaning ? "√" : "X"} Room Cleaning
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item lg={4} md={4} xs={12}>
+          <Card>
+            <CardContent>
+              <Typography gutterBottom color="textPrimary" variant="h7">
+                ${room.pricePerNight}/night
+              </Typography>
+              <Divider />
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <StaticDatePicker
+                  orientation="portrait"
+                  openTo="day"
+                  value={value}
+                  shouldDisableDate={isWeekend}
+                  onChange={(newValue) => {
+                    setValue(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item lg={12} md={12} xs={12}>
+          <Card>
+            <CardContent>
+              <Typography gutterBottom color="textPrimary" variant="h5">
+                Reviews
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
     </Container>
   );
 };

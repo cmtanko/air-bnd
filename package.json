@@ -17,6 +17,7 @@
     "@mui/material": "^5.0.6",
     "@mui/styles": "^5.0.2",
     "axios": "^0.24.0",
+    "bcryptjs": "^2.4.3",
     "chart.js": "^3.5.1",
     "date-fns": "^2.25.0",
     "formik": "^2.1.5",
@@ -24,6 +25,7 @@
     "mongoose": "^6.0.14",
     "next": "12.0.5",
     "next-absolute-url": "^1.2.2",
+    "next-auth": "3.29.0",
     "next-connect": "^0.11.0",
     "next-redux-wrapper": "^7.0.5",
     "nprogress": "^0.2.0",
@@ -40,6 +42,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.1",
     "uuid": "^8.3.0",
+    "validator": "^13.7.0",
     "yup": "^0.32.9"
   },
   "devDependencies": {
