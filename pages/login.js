@@ -20,6 +20,26 @@ import { Google as GoogleIcon } from "../_Client/icons/google";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { wrapper } from "../_Client/redux/store";
+import { getSession } from "next-auth/client";
+
+export const getServerSideProps = wrapper.getServerSideProps((store) => {
+  return async ({ req, query }) => {
+    const session = await getSession({ req });
+    if (session) {
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false
+        }
+      };
+    }
+
+    return {
+      props: {}
+    };
+  };
+});
 
 const Login = () => {
   const router = useRouter();

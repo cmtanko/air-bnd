@@ -31,4 +31,21 @@ const currentUserProfile = catchAsyncErrors(async (req, res) => {
   });
 });
 
-export { registerUser, currentUserProfile };
+const updateProfile = catchAsyncErrors(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    user.name = req.body.firstName + " " + req.body.lastName;
+    user.email = req.body.email;
+
+    if (req.body.password) user.password = req.body.password;
+  }
+
+  await user.save();
+
+  res.status(200).json({
+    success: true
+  });
+});
+
+export { registerUser, currentUserProfile, updateProfile };

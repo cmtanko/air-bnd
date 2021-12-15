@@ -49,3 +49,33 @@ export const loadUser = (req) => async (dispatch) => {
     });
   }
 };
+
+export const updateProfile = (userData) => async (dispatch) => {
+  try {
+    console.warn("---+++")
+    console.warn({userData})
+    dispatch({ type: ACTION_TYPES.UPDATE_USER_PROFILE_REQUEST });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    const { data } = await axios.put(
+      `${origin}/api/account/update`,
+      userData,
+      config
+    );
+
+    dispatch({
+      type: ACTION_TYPES.UPDATE_USER_PROFILE_SUCCESS,
+      payload: data.success
+    });
+  } catch (error) {
+    dispatch({
+      type: ACTION_TYPES.UPDATE_USER_PROFILE_FAIL,
+      payload: error?.response?.data?.message || "Error"
+    });
+  }
+};

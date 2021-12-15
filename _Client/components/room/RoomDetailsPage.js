@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
-
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import {
   Box,
+  Button,
   Container,
   Grid,
   Pagination,
@@ -26,9 +28,58 @@ import isWeekend from "date-fns/isWeekend";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import StaticDatePicker from "@mui/lab/StaticDatePicker";
+import axios from "axios";
+
 const RoomDetailsPage = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   const { room, error = "" } = useSelector((state) => state.room);
   const [value, setValue] = React.useState(new Date());
+  const [checkInDate, setCheckInDate] = useState();
+  const [checkOutDate, setCheckOutDate] = useState();
+  const [daysOfStay, setDaysOfStay] = useState();
+
+  const onDateChange = (dates) => {
+    const [checkInDate, checkOutDate] = dates;
+    setCheckInDate(checkInDate);
+    setCheckOutDate(checkOutDate);
+
+    if (checkInDate && checkOutDate) {
+      const days = Math.floor(
+        (new Date(checkOutDate) - new Date(checkInDate)) / 8640000 + 1
+      );
+
+      setDaysOfStay(days);
+    }
+  };
+
+  const newBookingHandler = async () => {
+    const bookingDate = {
+      room: router.query.id,
+      checkInDate,
+      checkOutDate,
+      daysOfStay,
+      amountPaid: 90,
+      paymentInfo: {
+        id: "STRIPE_PAYMENT_ID",
+        status: "STRIPE_PAYMENT_STATUS"
+      },
+    };
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      };
+
+      const { data } = await axios.post("/api/bookings", bookingDate, config);
+      console.warn(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     error && toast.error(error);
@@ -144,18 +195,31 @@ const RoomDetailsPage = () => {
                 ${room.pricePerNight}/night
               </Typography>
               <Divider />
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <StaticDatePicker
-                  orientation="portrait"
-                  openTo="day"
-                  value={value}
-                  shouldDisableDate={isWeekend}
-                  onChange={(newValue) => {
-                    setValue(newValue);
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
+
+              <Typography
+                gutterBottom
+                color="textPrimary"
+                variant="h6"
+                mb={1}
+                mt={2}
+              >
+                Pick checkin and checkout dates
+              </Typography>
+              <DatePicker
+                selected={checkInDate}
+                startDate={checkInDate}
+                endDate={checkOutDate}
+                onChange={onDateChange}
+                selectsRange
+                inline
+              />
+              <Button
+                color="secondary"
+                variant="contained"
+                onClick={newBookingHandler}
+              >
+                Pay
+              </Button>
             </CardContent>
           </Card>
         </Grid>

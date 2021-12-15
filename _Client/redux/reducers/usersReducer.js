@@ -42,3 +42,25 @@ export const authReducer = (state = { loading: true, user: null }, action) => {
       return state;
   }
 };
+
+export const userReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ACTION_TYPES.UPDATE_USER_PROFILE_REQUEST:
+      return {
+        loading: true
+      };
+    case ACTION_TYPES.UPDATE_USER_PROFILE_SUCCESS:
+      return {
+        loading: false,
+        isUpdated: action.payload
+      };
+    case ACTION_TYPES.UPDATE_USER_PROFILE_FAIL:
+      return {
+        loading: false,
+        isUpdated: false,
+        error: action.payload
+      };
+    default:
+      return state;
+  }
+};
