@@ -29,17 +29,23 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import StaticDatePicker from "@mui/lab/StaticDatePicker";
 import axios from "axios";
+import { checkBooking } from "../../redux/actions/bookingAction";
+import { CHECK_BOOKING_REQUEST } from "../../redux/constants/actionConstants";
 
 const RoomDetailsPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
   const { room, error = "" } = useSelector((state) => state.room);
+  const { available } = useSelector((state) => state.checkBooking);
+  const { user } = useSelector((state) => state.auth);
+
   const [value, setValue] = React.useState(new Date());
   const [checkInDate, setCheckInDate] = useState();
   const [checkOutDate, setCheckOutDate] = useState();
   const [daysOfStay, setDaysOfStay] = useState();
 
+  const { id } = router.query;
   const onDateChange = (dates) => {
     const [checkInDate, checkOutDate] = dates;
     setCheckInDate(checkInDate);
@@ -51,6 +57,10 @@ const RoomDetailsPage = () => {
       );
 
       setDaysOfStay(days);
+
+      dispatch(
+        checkBooking(id, checkInDate.toISOString(), checkOutDate.toISOString())
+      );
     }
   };
 
@@ -64,7 +74,7 @@ const RoomDetailsPage = () => {
       paymentInfo: {
         id: "STRIPE_PAYMENT_ID",
         status: "STRIPE_PAYMENT_STATUS"
-      },
+      }
     };
 
     try {
@@ -195,7 +205,6 @@ const RoomDetailsPage = () => {
                 ${room.pricePerNight}/night
               </Typography>
               <Divider />
-
               <Typography
                 gutterBottom
                 color="textPrimary"
@@ -210,9 +219,25 @@ const RoomDetailsPage = () => {
                 startDate={checkInDate}
                 endDate={checkOutDate}
                 onChange={onDateChange}
+                minDate={new Date()}
                 selectsRange
                 inline
               />
+              {available && (
+                <Typography align="left" color="textPrimary" variant="body1">
+                  Room is available. Book
+                </Typography>
+              )}
+              {!available && (
+                <Typography align="left" color="textDanger" variant="body1">
+                  Room is not available
+                </Typography>
+              )}
+              {available && !user && (
+                <Typography align="left" color="textPrimary" variant="body1">
+                  Login to Book
+                </Typography>
+              )}
               <Button
                 color="secondary"
                 variant="contained"

@@ -35,17 +35,17 @@ const newBooking = catchAsyncErrors(async (req, res) => {
 });
 
 const checkRoomBookingsAvailability = catchAsyncErrors(async (req, res) => {
-  let { roomId, checkInDate, checckOutDate } = req.query;
+  let { roomId, checkInDate, checkOutDate } = req.query;
 
   checkInDate = new Date(checkInDate);
-  checckOutDate = new Date(checckOutDate);
+  checkOutDate = new Date(checkOutDate);
 
-  const booking = await Booking.find({
+  const bookings = await Booking.find({
     room: roomId,
     $and: [
       {
         checkInDate: {
-          $lte: checckOutDate
+          $lte: checkOutDate
         }
       },
       {
@@ -55,7 +55,7 @@ const checkRoomBookingsAvailability = catchAsyncErrors(async (req, res) => {
       }
     ]
   });
-
+  
   let isAvailable;
 
   if (bookings && bookings.length === 0) {
@@ -64,10 +64,9 @@ const checkRoomBookingsAvailability = catchAsyncErrors(async (req, res) => {
     isAvailable = false;
   }
 
-  console.warn(booking);
   res.status(200).json({
     success: true,
-    booking
+    isAvailable
   });
 });
 
