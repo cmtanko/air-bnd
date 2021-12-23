@@ -29,8 +29,12 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import StaticDatePicker from "@mui/lab/StaticDatePicker";
 import axios from "axios";
-import { checkBooking } from "../../redux/actions/bookingAction";
+import {
+  checkBooking,
+  getBookedDates
+} from "../../redux/actions/bookingAction";
 import { CHECK_BOOKING_REQUEST } from "../../redux/constants/actionConstants";
+import getStripe from "../../../_Server/utils/getStripe";
 
 const RoomDetailsPage = () => {
   const dispatch = useDispatch();
@@ -38,12 +42,19 @@ const RoomDetailsPage = () => {
 
   const { room, error = "" } = useSelector((state) => state.room);
   const { available } = useSelector((state) => state.checkBooking);
+  const { dates = [] } = useSelector((state) => state.bookedDates);
+
   const { user } = useSelector((state) => state.auth);
 
   const [value, setValue] = React.useState(new Date());
   const [checkInDate, setCheckInDate] = useState();
   const [checkOutDate, setCheckOutDate] = useState();
   const [daysOfStay, setDaysOfStay] = useState();
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const excludedDates = [];
+  dates.map((date) => {
+    excludedDates.push(new Date(date));
+  });
 
   const { id } = router.query;
   const onDateChange = (dates) => {
@@ -91,9 +102,30 @@ const RoomDetailsPage = () => {
     }
   };
 
+  const bookRoom = async (id, pricePerNight) => {
+    setPaymentLoading(true);
+
+    const amount = pricePerNight * daysOfStay;
+
+    try {
+      const link = `http://localhost:3000/api/checkout_session/${id}?checkInDate=${checkInDate.toISOString()}&checkOutDate=${checkOutDate.toISOString()}&daysOfStay=${daysOfStay}`;
+      const { data } = await axios.get(link, { params: { amount } });
+
+      const stripe = await getStripe();
+
+      stripe.redirectToCheckout({ sessionId: data.id });
+      setPaymentLoading(false);
+    } catch (error) {
+      setPaymentLoading(false);
+      toast.error(error.message);
+    }
+  };
+
   useEffect(() => {
+    dispatch(getBookedDates(id));
+
     error && toast.error(error);
-  }, []);
+  }, [dispatch, id]);
 
   return (
     <Container maxWidth={false}>
@@ -220,6 +252,7 @@ const RoomDetailsPage = () => {
                 endDate={checkOutDate}
                 onChange={onDateChange}
                 minDate={new Date()}
+                excludeDates={excludedDates}
                 selectsRange
                 inline
               />
@@ -238,13 +271,19 @@ const RoomDetailsPage = () => {
                   Login to Book
                 </Typography>
               )}
-              <Button
-                color="secondary"
-                variant="contained"
-                onClick={newBookingHandler}
-              >
-                Pay
-              </Button>
+
+              {available && user && (
+                <Button
+                  color="secondary"
+                  variant="contained"
+                  onClick={() => {
+                    bookRoom(room._id, room.pricePerNight);
+                  }}
+                  disabled={paymentLoading}
+                >
+                  Pay - ${daysOfStay * room.pricePerNight}
+                </Button>
+              )}
             </CardContent>
           </Card>
         </Grid>

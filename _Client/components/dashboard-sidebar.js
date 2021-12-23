@@ -21,6 +21,11 @@ const items = [
     href: '/',
     icon: (<ChartBarIcon fontSize="small" />),
     title: 'Dashboard'
+  }, 
+  {
+    href: '/bookings/me',
+    icon: (<UsersIcon fontSize="small" />),
+    title: 'My Bookings'
   },
   {
     href: '/customers',

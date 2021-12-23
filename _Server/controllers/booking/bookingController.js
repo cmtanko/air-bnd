@@ -2,6 +2,10 @@ import Booking from "../../models/Booking";
 import ErrorHandler from "../../utils/errorHandler";
 import catchAsyncErrors from "../../middlewares/catchAsyncErrors";
 import APIFeatures from "../../utils/apiFeatures";
+import Moment from "moment";
+import { extendMoment } from "moment-range";
+
+const moment = extendMoment(Moment);
 
 // Create new room   =>   /api/rooms
 const newBooking = catchAsyncErrors(async (req, res) => {
@@ -55,7 +59,7 @@ const checkRoomBookingsAvailability = catchAsyncErrors(async (req, res) => {
       }
     ]
   });
-  
+
   let isAvailable;
 
   if (bookings && bookings.length === 0) {
@@ -70,4 +74,69 @@ const checkRoomBookingsAvailability = catchAsyncErrors(async (req, res) => {
   });
 });
 
-export { newBooking, checkRoomBookingsAvailability };
+const checkBookedDatesOfRoom = catchAsyncErrors(async (req, res) => {
+  const { roomId } = req.query;
+
+  const bookings = await Booking.find({ room: roomId });
+
+  let bookedDates = [];
+  const timeDiff = moment().utcOffset() / 60;
+
+  bookings.map((booking) => {
+    const checkInDate = moment(booking.checkInDate).add(timeDiff, "hours");
+    const checkOutDate = moment(booking.checkOutDate).add(timeDiff, "hours");
+
+    const range = moment.range(checkInDate, checkOutDate);
+
+    const dates = Array.from(range.by("day"));
+
+    bookedDates = bookedDates.concat(dates);
+  });
+
+  res.status(200).json({
+    success: true,
+    bookedDates
+  });
+});
+
+const myBookings = catchAsyncErrors(async (req, res) => {
+  const bookings = await Booking.find({ user: req.user._id })
+    .populate({
+      path: "room",
+      select: "name pricePerNight images"
+    })
+    .populate({
+      path: "user",
+      select: "name email"
+    });
+
+  res.status(200).json({
+    success: true,
+    bookings
+  });
+});
+
+const getBookingDetails = catchAsyncErrors(async (req, res) => {
+  const booking = await Booking.findById(req.query.id)
+    .populate({
+      path: "room",
+      select: "name pricePerNight images"
+    })
+    .populate({
+      path: "user",
+      select: "name email"
+    });
+
+  res.status(200).json({
+    success: true,
+    booking
+  });
+});
+
+export {
+  myBookings,
+  newBooking,
+  getBookingDetails,
+  checkBookedDatesOfRoom,
+  checkRoomBookingsAvailability
+};
