@@ -39,8 +39,6 @@ import getStripe from "../../../_Server/utils/getStripe";
 import ListReviews from "../review/ListReviews";
 
 const RoomDetailsPage = () => {
-  alert(JSON.stringify(process.env));
-
   const dispatch = useDispatch();
   const router = useRouter();
 
