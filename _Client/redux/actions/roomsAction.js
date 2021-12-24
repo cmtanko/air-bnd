@@ -2,9 +2,7 @@ import axios from "axios";
 
 import { ACTION_TYPES } from "../constants/actionConstants";
 
-// const origin = process.env.ORIGIN_LOCAL;
 const origin = process.env.ORIGIN;
-
 
 export const getRooms =
   (req, page = 1, location = "") =>
@@ -82,4 +80,50 @@ export const updateAnswers = (answers) => async (dispatch) => {
     type: "UPDATE_ANSWERS",
     payload: answers
   });
+};
+
+export const newReview = (reviewData) => async (dispatch) => {
+  try {
+    dispatch({ type: ACTION_TYPES.NEW_REVIEW_REQUEST });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    const { data } = await axios.put(
+      `http://localhost:3000/api/reviews`,
+      reviewData,
+      config
+    );
+    dispatch({
+      type: ACTION_TYPES.NEW_REVIEW_SUCCESS,
+      payload: data.success
+    });
+  } catch (error) {
+    dispatch({
+      type: ACTION_TYPES.NEW_REVIEW_FAIL,
+      payload: error?.response?.data?.message || "Error"
+    });
+  }
+};
+
+export const checkReviewAvailability = (roomId) => async (dispatch) => {
+  try {
+    dispatch({ type: ACTION_TYPES.REVIEW_AVAILABILITY_REQUEST });
+
+    const { data } = await axios.get(
+      `http://localhost:3000/api/reviews/check_review_availability?roomId=${roomId}`
+    );
+    dispatch({
+      type: ACTION_TYPES.REVIEW_AVAILABILITY_SUCCESS,
+      payload: data.isReviewAvailable
+    });
+  } catch (error) {
+    dispatch({
+      type: ACTION_TYPES.REVIEW_AVAILABILITY_FAIL,
+      payload: error?.response?.data?.message || "Error"
+    });
+  }
 };

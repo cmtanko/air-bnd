@@ -39,3 +39,48 @@ export const roomDetailsReducer = (state = { room: {} }, action) => {
       return state;
   }
 };
+
+export const newReviewReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ACTION_TYPES.NEW_REVIEW_RESET:
+      return {
+        loading: true
+      };
+    case ACTION_TYPES.NEW_REVIEW_SUCCESS:
+      return {
+        loading: false,
+        success: action.payload
+      };
+    case ACTION_TYPES.NEW_REVIEW_FAIL:
+      return {
+        loading: false,
+        error: action.payload
+      };
+    default:
+      return state;
+  }
+};
+
+export const checkReviewReducer = (
+  state = { reviewAvailable: null },
+  action
+) => {
+  switch (action.type) {
+    case ACTION_TYPES.REVIEW_AVAILABILITY_REQUEST:
+      return {
+        loading: true
+      };
+    case ACTION_TYPES.REVIEW_AVAILABILITY_SUCCESS:
+      return {
+        loading: false,
+        reviewAvailable: action.payload
+      };
+    case ACTION_TYPES.REVIEW_AVAILABILITY_FAIL:
+      return {
+        loading: false,
+        error: action.payload
+      };
+    default:
+      return state;
+  }
+};

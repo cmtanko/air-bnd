@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -8,62 +8,98 @@ import {
   Divider,
   Grid,
   TextField
-} from '@mui/material';
-
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProfile } from "../../redux/actions/userAction";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
+import { wrapper } from "../../redux/store";
 const states = [
   {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
+    value: "vic",
+    label: "VIC"
   }
 ];
 
-export const AccountProfileDetails = (props) => {
-  const [values, setValues] = useState({
-    firstName: 'Katarina',
-    lastName: 'Smith',
-    email: 'demo@devias.io',
-    phone: '',
-    state: 'Alabama',
-    country: 'USA'
+export const getServerSideProps = wrapper.getServerSideProps((store) => {
+  return async ({ req, query }) => {
+    const session = await getSession({ req });
+    if (!session) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false
+        }
+      };
+    }
+
+    return {
+      props: {}
+    };
+  };
+});
+
+export const AccountProfileDetails = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [user, setUser] = useState({
+    firstName: "",
+    lastName: "",
+    email: ""
   });
 
+  const { user: loadedUser, loading } = useSelector((state) => state.auth);
+  const {
+    error,
+    isUpdated,
+    loading: updateLoading
+  } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (loadedUser) {
+      setUser({
+        email: loadedUser.email,
+        firstName: loadedUser.name.split(" ")[0],
+        lastName: loadedUser.name.split(" ")[1]
+      });
+    }
+
+    if (error) {
+      toast.error(error);
+    }
+
+    if (isUpdated) {
+      router.push("/");
+    }
+  }, [dispatch, isUpdated, error, loadedUser]);
+
   const handleChange = (event) => {
-    setValues({
-      ...values,
+    setUser({
+      ...user,
       [event.target.name]: event.target.value
     });
   };
 
+  const handleSubmit = (event) => {
+    console.warn("----->");
+    console.warn(user);
+    dispatch(
+      updateProfile({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email
+      })
+    );
+  };
+
   return (
-    <form
-      autoComplete="off"
-      noValidate
-      {...props}
-    >
+    <form autoComplete="off" noValidate>
       <Card>
-        <CardHeader
-          subheader="The information can be edited"
-          title="Profile"
-        />
+        <CardHeader subheader="The information can be edited" title="Profile" />
         <Divider />
         <CardContent>
-          <Grid
-            container
-            spacing={3}
-          >
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+          <Grid container spacing={3}>
+            <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
                 helperText="Please specify the first name"
@@ -71,91 +107,70 @@ export const AccountProfileDetails = (props) => {
                 name="firstName"
                 onChange={handleChange}
                 required
-                value={values.firstName}
+                value={user.firstName}
                 variant="outlined"
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
                 label="Last name"
                 name="lastName"
                 onChange={handleChange}
                 required
-                value={values.lastName}
+                value={user.lastName}
                 variant="outlined"
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
                 label="Email Address"
                 name="email"
                 onChange={handleChange}
                 required
-                value={values.email}
+                value={user.email}
                 variant="outlined"
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
                 label="Phone Number"
+                disabled
                 name="phone"
                 onChange={handleChange}
                 type="number"
-                value={values.phone}
                 variant="outlined"
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
                 label="Country"
                 name="country"
+                disabled
                 onChange={handleChange}
                 required
-                value={values.country}
+                value="Australia"
                 variant="outlined"
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
+            <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
                 label="Select State"
                 name="state"
+                disabled
                 onChange={handleChange}
                 required
                 select
                 SelectProps={{ native: true }}
-                value={values.state}
+                value="VIC"
                 variant="outlined"
               >
                 {states.map((option) => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                  >
+                  <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
                 ))}
@@ -166,15 +181,12 @@ export const AccountProfileDetails = (props) => {
         <Divider />
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
+            display: "flex",
+            justifyContent: "flex-end",
             p: 2
           }}
         >
-          <Button
-            color="primary"
-            variant="contained"
-          >
+          <Button color="primary" variant="contained" onClick={handleSubmit}>
             Save details
           </Button>
         </Box>
