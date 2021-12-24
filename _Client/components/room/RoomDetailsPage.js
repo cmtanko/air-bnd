@@ -110,7 +110,7 @@ const RoomDetailsPage = () => {
     const amount = pricePerNight * daysOfStay;
 
     try {
-      const link = `http://localhost:3000/api/checkout_session/${id}?checkInDate=${checkInDate.toISOString()}&checkOutDate=${checkOutDate.toISOString()}&daysOfStay=${daysOfStay}`;
+      const link = `${process.env.ORIGIN}/api/checkout_session/${id}?checkInDate=${checkInDate.toISOString()}&checkOutDate=${checkOutDate.toISOString()}&daysOfStay=${daysOfStay}`;
       const { data } = await axios.get(link, { params: { amount } });
 
       const stripe = await getStripe();
