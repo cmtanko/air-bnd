@@ -23,6 +23,7 @@ import DatePicker from "react-datepicker";
 import { RoomCard } from "./RoomCard";
 import { ProductListToolbar } from "./RoomListToolbar";
 import "react-datepicker/dist/react-datepicker.css";
+import NewReview from "../review/NewReview";
 
 import isWeekend from "date-fns/isWeekend";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -35,6 +36,7 @@ import {
 } from "../../redux/actions/bookingAction";
 import { CHECK_BOOKING_REQUEST } from "../../redux/constants/actionConstants";
 import getStripe from "../../../_Server/utils/getStripe";
+import ListReviews from "../review/ListReviews";
 
 const RoomDetailsPage = () => {
   const dispatch = useDispatch();
@@ -293,7 +295,13 @@ const RoomDetailsPage = () => {
               <Typography gutterBottom color="textPrimary" variant="h5">
                 Reviews
               </Typography>
+              {room.reviews && room.reviews.length > 0 ? (
+                <ListReviews reviews={room.reviews} />
+              ) : (
+                <p>No Reviews on this room</p>
+              )}
             </CardContent>
+            <NewReview />
           </Card>
         </Grid>
       </Grid>
