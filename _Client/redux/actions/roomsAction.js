@@ -59,7 +59,7 @@ export const updateInformRecord = (answers, id) => async (dispatch) => {
 
     // const { origin } = absoluteUrl(req);
     const { data } = await axios.put(
-      `http://localhost:3000/api/informrecords/${id}`,
+      `${process.env.ORIGIN}/api/informrecords/${id}`,
       answers,
       config
     );
@@ -93,7 +93,7 @@ export const newReview = (reviewData) => async (dispatch) => {
     };
 
     const { data } = await axios.put(
-      `http://localhost:3000/api/reviews`,
+      `${process.env.ORIGIN}/api/reviews`,
       reviewData,
       config
     );
@@ -114,7 +114,7 @@ export const checkReviewAvailability = (roomId) => async (dispatch) => {
     dispatch({ type: ACTION_TYPES.REVIEW_AVAILABILITY_REQUEST });
 
     const { data } = await axios.get(
-      `http://localhost:3000/api/reviews/check_review_availability?roomId=${roomId}`
+      `${process.env.ORIGIN}/api/reviews/check_review_availability?roomId=${roomId}`
     );
     dispatch({
       type: ACTION_TYPES.REVIEW_AVAILABILITY_SUCCESS,
