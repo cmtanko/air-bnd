@@ -63,12 +63,12 @@ const webhookCheckout = catchAsyncErrors(async (req, res, next) => {
         status: session.payment_status
       };
 
-      const { checkInData, checkOutDate, daysOfStay } = session.metadata;
+      const { checkInDate, checkOutDate, daysOfStay } = session.metadata;
 
       const booking = await Booking.create({
         room,
         user,
-        checkInData,
+        checkInDate,
         checkOutDate,
         daysOfStay,
         amountPaid,
