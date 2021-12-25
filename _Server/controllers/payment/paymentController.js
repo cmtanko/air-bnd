@@ -68,7 +68,7 @@ const webhookCheckout = catchAsyncErrors(async (req, res, next) => {
       const booking = await Booking.create({
         room,
         user,
-        checkIndate,
+        checkInData,
         checkOutDate,
         daysOfStay,
         amountPaid,
@@ -76,8 +76,11 @@ const webhookCheckout = catchAsyncErrors(async (req, res, next) => {
         paidAt: Date.now()
       });
 
+      console.warn({booking});
+      
       res.status(200).json({
-        success: true
+        success: true,
+        booking
       });
     }
   } catch (error) {
