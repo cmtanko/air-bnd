@@ -1,4 +1,6 @@
 import Booking from "../../models/Booking";
+import Room from "../../models/room";
+import User from "../../models/user";
 import ErrorHandler from "../../utils/errorHandler";
 import catchAsyncErrors from "../../middlewares/catchAsyncErrors";
 import APIFeatures from "../../utils/apiFeatures";
