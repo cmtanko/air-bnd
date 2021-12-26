@@ -21,7 +21,6 @@ const newBooking = catchAsyncErrors(async (req, res) => {
     paidAt
   } = req.body;
 
-  console.warn(req.body);
   const booking = await Booking.create({
     room,
     user: req.user._id,
@@ -33,7 +32,6 @@ const newBooking = catchAsyncErrors(async (req, res) => {
     paidAt: Date.now()
   });
 
-  console.warn(booking);
   res.status(200).json({
     success: true,
     booking
@@ -119,6 +117,7 @@ const myBookings = catchAsyncErrors(async (req, res) => {
 });
 
 const getBookingDetails = catchAsyncErrors(async (req, res) => {
+  debugger;
   const booking = await Booking.findById(req.query.id)
     .populate({
       path: "room",

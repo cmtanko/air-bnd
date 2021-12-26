@@ -13,8 +13,8 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import {
   newReview,
-  checkReviewAvailability
-  //   clearErrors
+  checkReviewAvailability,
+  clearError
 } from "../../redux/actions/roomsAction";
 import { ACTION_TYPES } from "../../redux/constants/actionConstants";
 
@@ -37,7 +37,7 @@ const NewReview = () => {
 
     if (error) {
       toast.error(error);
-      dispatch(clearErrors());
+      dispatch(clearError());
     }
 
     if (success) {

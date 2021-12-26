@@ -6,18 +6,20 @@ import ErrorHandler from "../../utils/errorHandler";
 import catchAsyncErrors from "../../middlewares/catchAsyncErrors";
 import APIFeatures from "../../utils/apiFeatures";
 import getRawBody from "raw-body";
+import absoluteUrl from 'next-absolute-url';
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const stripeCheckoutSession = catchAsyncErrors(async (req, res, next) => {
+  const { origin } = absoluteUrl(req);
   const room = await Room.findById(req.query.roomId);
 
   const { checkInDate, checkOutDate, daysOfStay } = req.query;
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
-    success_url: `${process.env.ORIGIN}/bookings/me`,
-    cancel_url: `${process.env.ORIGIN}/rooms/${room._id}`,
+    success_url: `${origin}/bookings/me`,
+    cancel_url: `${origin}/rooms/${room._id}`,
     customer_email: req.user.email,
     client_reference_id: req.query.roomId,
     metadata: {
@@ -55,7 +57,6 @@ const webhookCheckout = catchAsyncErrors(async (req, res, next) => {
 
       const room = session.client_reference_id;
       const user = (await User.findOne({ email: session.customer_email })).id;
-      console.warn({user});
 
       const amountPaid = session.amount_total / 100;
 
@@ -76,8 +77,6 @@ const webhookCheckout = catchAsyncErrors(async (req, res, next) => {
         paymentInfo,
         paidAt: Date.now()
       });
-
-      console.warn({booking});
       
       res.status(200).json({
         success: true,

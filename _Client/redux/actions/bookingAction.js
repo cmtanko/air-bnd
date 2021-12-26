@@ -1,15 +1,14 @@
 import axios from "axios";
+import absoluteUrl from "next-absolute-url";
 
 import { ACTION_TYPES } from "../constants/actionConstants";
-
-const origin = process.env.ORIGIN;
 
 export const checkBooking =
   (roomId, checkInDate, checkOutDate) => async (dispatch) => {
     try {
       dispatch({ type: ACTION_TYPES.CHECK_BOOKING_REQUEST });
 
-      let link = `${origin}/api/bookings/check?roomId=${roomId}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`;
+      let link = `/api/bookings/check?roomId=${roomId}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`;
 
       const { data } = await axios.get(link);
 
@@ -28,9 +27,8 @@ export const checkBooking =
 export const getBookedDates = (id) => async (dispatch) => {
   try {
     const { data } = await axios.get(
-      `${origin}/api/bookings/check_booked_dates?roomId=${id}`
+      `/api/bookings/check_booked_dates?roomId=${id}`
     );
-
     dispatch({
       type: ACTION_TYPES.BOOKED_DATES_SUCCESS,
       payload: data.bookedDates
@@ -43,9 +41,9 @@ export const getBookedDates = (id) => async (dispatch) => {
   }
 };
 
-export const myBookings = () => async (dispatch) => {
+export const myBookings = (req) => async (dispatch) => {
   try {
-    const { data } = await axios.get(`${origin}/api/bookings/me`);
+    const { data } = await axios.get(`/api/bookings/me`);
 
     dispatch({
       type: ACTION_TYPES.MY_BOOKINGS_SUCCESS,
@@ -61,6 +59,9 @@ export const myBookings = () => async (dispatch) => {
 
 export const getBookingDetails = (authCookie, req, id) => async (dispatch) => {
   try {
+    debugger;
+    const { origin } = absoluteUrl(req);
+
     const config = {
       headers: {
         cookie: authCookie
