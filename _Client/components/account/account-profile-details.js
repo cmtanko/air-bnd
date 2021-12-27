@@ -81,8 +81,6 @@ export const AccountProfileDetails = () => {
   };
 
   const handleSubmit = (event) => {
-    console.warn("----->");
-    console.warn(user);
     dispatch(
       updateProfile({
         firstName: user.firstName,

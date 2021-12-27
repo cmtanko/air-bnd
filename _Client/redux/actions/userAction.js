@@ -1,11 +1,12 @@
 import axios from "axios";
 
 import { ACTION_TYPES } from "../constants/actionConstants";
-
-const origin = process.env.ORIGIN;
+import absoluteUrl from "next-absolute-url";
 
 export const registerUser = (userData) => async (dispatch) => {
   try {
+    const { origin } = absoluteUrl(req);
+
     dispatch({ type: ACTION_TYPES.REGISTER_USER_REQUEST });
 
     const config = {
@@ -34,6 +35,8 @@ export const registerUser = (userData) => async (dispatch) => {
 
 export const loadUser = (req) => async (dispatch) => {
   try {
+    const { origin } = absoluteUrl(req);
+
     dispatch({ type: ACTION_TYPES.LOAD_USER_REQUEST });
 
     const { data } = await axios.get(`${origin}/api/me`);
@@ -50,10 +53,10 @@ export const loadUser = (req) => async (dispatch) => {
   }
 };
 
-export const updateProfile = (userData) => async (dispatch) => {
+export const updateProfile = (req, userData) => async (dispatch) => {
   try {
-    console.warn("---+++")
-    console.warn({userData})
+    const { origin } = absoluteUrl(req);
+
     dispatch({ type: ACTION_TYPES.UPDATE_USER_PROFILE_REQUEST });
 
     const config = {

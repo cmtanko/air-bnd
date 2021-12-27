@@ -32,14 +32,12 @@ export const RoomCard = ({ product: room, ...rest }) => {
           }}
         >
           <Link href={roomLink}>
-            <a>
-              <CardMedia
-                component="img"
-                height="240"
-                image={room.images[0].url}
-                alt="hotels"
-              />
-            </a>
+            <CardMedia
+              component="img"
+              height="240"
+              image={room.images[0].url}
+              alt="hotels"
+            />
           </Link>
         </Box>
         <Typography

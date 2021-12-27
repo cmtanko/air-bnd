@@ -2,16 +2,16 @@ import axios from "axios";
 
 import { ACTION_TYPES } from "../constants/actionConstants";
 
-const origin = process.env.ORIGIN;
+import absoluteUrl from "next-absolute-url";
 
 export const getRooms =
   (req, page = 1, location = "") =>
   async (dispatch) => {
     try {
+      const { origin } = absoluteUrl(req);
       const { data } = await axios.get(
         `${origin}/api/rooms?page=${page}&location=${location}`
       );
-
       dispatch({
         type: ACTION_TYPES.GET_ROOMS_SUCCESS,
         payload: data
@@ -33,6 +33,7 @@ export const clearError = (req) => async (dispatch) => {
 
 export const getRoomDetails = (req, id) => async (dispatch) => {
   try {
+    const { origin } = absoluteUrl(req);
     const { data } = await axios.get(`${origin}/api/rooms/${id}`);
 
     dispatch({
@@ -49,6 +50,7 @@ export const getRoomDetails = (req, id) => async (dispatch) => {
 
 export const updateInformRecord = (answers, id) => async (dispatch) => {
   try {
+    const { origin } = absoluteUrl(req);
     dispatch({ type: ACTION_TYPES.UPDATE_INFORM_RECORDS_REQUEST });
 
     const config = {
@@ -57,9 +59,8 @@ export const updateInformRecord = (answers, id) => async (dispatch) => {
       }
     };
 
-    // const { origin } = absoluteUrl(req);
     const { data } = await axios.put(
-      `${process.env.ORIGIN}/api/informrecords/${id}`,
+      `${origin}/api/informrecords/${id}`,
       answers,
       config
     );
@@ -92,11 +93,7 @@ export const newReview = (reviewData) => async (dispatch) => {
       }
     };
 
-    const { data } = await axios.put(
-      `${process.env.ORIGIN}/api/reviews`,
-      reviewData,
-      config
-    );
+    const { data } = await axios.put(`/api/reviews`, reviewData, config);
     dispatch({
       type: ACTION_TYPES.NEW_REVIEW_SUCCESS,
       payload: data.success
@@ -104,7 +101,7 @@ export const newReview = (reviewData) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: ACTION_TYPES.NEW_REVIEW_FAIL,
-      payload: error?.response?.data?.message || "Error"
+      payload: error.toString()
     });
   }
 };
@@ -114,8 +111,9 @@ export const checkReviewAvailability = (roomId) => async (dispatch) => {
     dispatch({ type: ACTION_TYPES.REVIEW_AVAILABILITY_REQUEST });
 
     const { data } = await axios.get(
-      `${process.env.ORIGIN}/api/reviews/check_review_availability?roomId=${roomId}`
+      `/api/reviews/check_review_availability?roomId=${roomId}`
     );
+
     dispatch({
       type: ACTION_TYPES.REVIEW_AVAILABILITY_SUCCESS,
       payload: data.isReviewAvailable
