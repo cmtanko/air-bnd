@@ -1,11 +1,9 @@
-import Booking from "../../models/Booking";
+import Moment from "moment";
 import Room from "../../models/room";
 import User from "../../models/user";
-import ErrorHandler from "../../utils/errorHandler";
-import catchAsyncErrors from "../../middlewares/catchAsyncErrors";
-import APIFeatures from "../../utils/apiFeatures";
-import Moment from "moment";
+import Booking from "../../models/Booking";
 import { extendMoment } from "moment-range";
+import catchAsyncErrors from "../../middlewares/catchAsyncErrors";
 
 const moment = extendMoment(Moment);
 
@@ -13,23 +11,23 @@ const moment = extendMoment(Moment);
 const newBooking = catchAsyncErrors(async (req, res) => {
   const {
     room,
-    checkInDate,
-    checkOutDate,
-    daysOfStay,
+    paidAt,
     amountPaid,
+    daysOfStay,
     paymentInfo,
-    paidAt
+    checkInDate,
+    checkOutDate
   } = req.body;
 
   const booking = await Booking.create({
     room,
-    user: req.user._id,
-    checkInDate,
-    checkOutDate,
     daysOfStay,
     amountPaid,
     paymentInfo,
-    paidAt: Date.now()
+    checkInDate,
+    checkOutDate,
+    paidAt: Date.now(),
+    user: req.user._id
   });
 
   res.status(200).json({
