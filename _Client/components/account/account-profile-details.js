@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react";
+
 import {
   Box,
-  Button,
   Card,
-  CardContent,
-  CardHeader,
-  Divider,
   Grid,
-  TextField
+  Button,
+  Divider,
+  TextField,
+  CardHeader,
+  CardContent
 } from "@mui/material";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
+import { wrapper } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { updateProfile } from "../../redux/actions/userAction";
-import { useRouter } from "next/router";
-import { toast } from "react-toastify";
-import { wrapper } from "../../redux/store";
+
 const states = [
   {
     value: "vic",

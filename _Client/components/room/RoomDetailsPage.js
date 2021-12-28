@@ -66,7 +66,7 @@ const RoomDetailsPage = () => {
 
     if (checkInDate && checkOutDate) {
       const days = Math.floor(
-        (new Date(checkOutDate) - new Date(checkInDate)) / 8640000 + 1
+        (new Date(checkOutDate) - new Date(checkInDate)) / 86400000
       );
 
       setDaysOfStay(days);
@@ -99,7 +99,7 @@ const RoomDetailsPage = () => {
 
       const { data } = await axios.post("/api/bookings", bookingDate, config);
     } catch (error) {
-      console.error(error);
+      toast.error(error.message);
     }
   };
 
@@ -259,10 +259,10 @@ const RoomDetailsPage = () => {
               />
               {available && (
                 <Typography align="left" color="textPrimary" variant="body1">
-                  Room is available. Book
+                  Room is available. Book Here
                 </Typography>
               )}
-              {!available && (
+              {available !== null && !available && (
                 <Typography align="left" color="textDanger" variant="body1">
                   Room is not available
                 </Typography>
@@ -272,7 +272,6 @@ const RoomDetailsPage = () => {
                   Login to Book
                 </Typography>
               )}
-
               {available && user && (
                 <Button
                   color="secondary"
