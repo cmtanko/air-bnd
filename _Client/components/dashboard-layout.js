@@ -22,24 +22,24 @@ export const DashboardLayout = (props) => {
 
   return (
     <>
-      <DashboardLayoutRoot>
-        <Box
+      {/* <DashboardLayoutRoot> */}
+        {/* <Box
           sx={{
             display: "flex",
             flex: "1 1 auto",
             flexDirection: "column",
             width: "100%"
           }}
-        >
+        > */}
         <ToastContainer position="bottom-right"/>
           {children}
-        </Box>
-      </DashboardLayoutRoot>
-      <DashboardNavbar onSidebarOpen={() => setSidebarOpen(true)} />
-      <DashboardSidebar
+        {/* </Box> */}
+      {/* </DashboardLayoutRoot> */}
+      {/* <DashboardNavbar onSidebarOpen={() => setSidebarOpen(true)} /> */}
+      {/* <DashboardSidebar
         onClose={() => setSidebarOpen(false)}
         open={isSidebarOpen}
-      />
+      /> */}
     </>
   );
 };

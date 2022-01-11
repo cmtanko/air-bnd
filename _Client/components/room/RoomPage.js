@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { Box, Container, Grid, Pagination } from "@mui/material";
+import { Box, Container, Grid, Pagination, Typography } from "@mui/material";
 
 import { RoomCard } from "./RoomCard";
 import { ProductListToolbar } from "./RoomListToolbar";
@@ -36,12 +36,14 @@ const RoomPage = () => {
 
   return (
     <Container maxWidth={false}>
-      <ProductListToolbar />
+      <Typography sx={{ mt: 1 }} variant="h4">
+        Great holiday rentals {location ? "in" : ""} {location}
+      </Typography>
       <Box sx={{ pt: 3 }}>
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           {rooms &&
             rooms.map((room) => (
-              <Grid item key={room._id} lg={4} md={6} xs={12}>
+              <Grid item key={room._id} lg={3} md={4} sm={6}>
                 <RoomCard product={room} />
               </Grid>
             ))}

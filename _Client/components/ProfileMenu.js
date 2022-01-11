@@ -6,8 +6,11 @@ import Menu from "@mui/material/Menu";
 import { signOut } from "next-auth/client";
 import { Avatar } from "@mui/material";
 import { UserCircle as UserCircleIcon } from "../icons/user-circle";
+import { useRouter } from "next/router";
 
 const ProfileMenu = ({ user }) => {
+  const router = useRouter();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -41,8 +44,21 @@ const ProfileMenu = ({ user }) => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>{user?.user?.name}</MenuItem>
-      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      <MenuItem
+        onClick={() => {
+          router.push("/bookings/me");
+        }}
+      >
+        My Bookings
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          router.push("/account");
+        }}
+      >
+        {user?.user?.name}
+      </MenuItem>
+      {user && <MenuItem onClick={handleLogout}>Logout</MenuItem>}
     </Menu>
   );
 

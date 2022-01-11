@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateProfile } from "../_Client/redux/actions/userAction";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
+import Header from "../_Client/components/Header";
 
 const Account = () => {
   return (
@@ -18,6 +19,8 @@ const Account = () => {
       <Head>
         <title>Account | Air-bnd</title>
       </Head>
+    <Header></Header>
+
       <Box
         component="main"
         sx={{

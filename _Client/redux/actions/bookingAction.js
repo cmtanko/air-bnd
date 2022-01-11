@@ -59,7 +59,6 @@ export const myBookings = (req) => async (dispatch) => {
 
 export const getBookingDetails = (authCookie, req, id) => async (dispatch) => {
   try {
-    debugger;
     const { origin } = absoluteUrl(req);
 
     const config = {

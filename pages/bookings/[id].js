@@ -5,12 +5,14 @@ import { getBookingDetails } from "../../_Client/redux/actions/bookingAction";
 import { wrapper } from "../../_Client/redux/store";
 import BookingDetails from "../../_Client/components/booking/BookingDetails";
 import { getSession } from "next-auth/client";
-
+import Header from "../../_Client/components/Header";
 const BookingsDetailPage = () => (
   <>
     <Head>
       <title>Hotels | Air-bnd</title>
     </Head>
+    <Header />
+
     <Box
       component="main"
       sx={{
