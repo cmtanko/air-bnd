@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import { signOut } from "next-auth/client";
+import { signOut, signIn } from "next-auth/client";
 import { Avatar } from "@mui/material";
 import { UserCircle as UserCircleIcon } from "../icons/user-circle";
 import { useRouter } from "next/router";
@@ -26,6 +26,10 @@ const ProfileMenu = ({ user }) => {
     setAnchorEl(null);
     signOut();
   };
+
+  const handleLogin = () => {
+    router.push("/login")
+  }
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -58,7 +62,9 @@ const ProfileMenu = ({ user }) => {
       >
         {user?.user?.name}
       </MenuItem>
-      {user && <MenuItem onClick={handleLogout}>Logout</MenuItem>}
+      {user && user.user && <MenuItem onClick={handleLogout}>Logout</MenuItem>}
+      {user && !user.user && <MenuItem onClick={handleLogin}>Login</MenuItem>}
+
     </Menu>
   );
 
