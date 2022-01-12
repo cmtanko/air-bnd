@@ -5,13 +5,14 @@ import { getRooms } from "../_Client/redux/actions/roomsAction";
 import { wrapper } from "../_Client/redux/store";
 import RoomPage from "../_Client/components/room/RoomPage";
 import Header from "../_Client/components/Header";
-
+import Banner from "../_Client/components/Banner";
 const Products = () => (
   <>
     <Head>
       <title>Hotels | Air-bnd</title>
     </Head>
     <Header></Header>
+    <Banner></Banner>
     <Box
       component="main"
       sx={{
