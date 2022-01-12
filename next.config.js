@@ -8,6 +8,6 @@ module.exports = {
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET
   },
   images: {
-    domains: ["res.cloudinary.com"]
+    domains: ["res.cloudinary.com", "i.pinimg.com"]
   }
 };

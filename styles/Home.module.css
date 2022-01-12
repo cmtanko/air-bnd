@@ -114,3 +114,9 @@
     flex-direction: column;
   }
 }
+
+
+.header_icon {
+  object-fit: contain;
+  height: 10px;
+}

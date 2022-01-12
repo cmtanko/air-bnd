@@ -115,7 +115,6 @@ const myBookings = catchAsyncErrors(async (req, res) => {
 });
 
 const getBookingDetails = catchAsyncErrors(async (req, res) => {
-  debugger;
   const booking = await Booking.findById(req.query.id)
     .populate({
       path: "room",

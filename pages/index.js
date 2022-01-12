@@ -4,12 +4,14 @@ import { DashboardLayout } from "../_Client/components/dashboard-layout";
 import { getRooms } from "../_Client/redux/actions/roomsAction";
 import { wrapper } from "../_Client/redux/store";
 import RoomPage from "../_Client/components/room/RoomPage";
+import Header from "../_Client/components/Header";
 
 const Products = () => (
   <>
     <Head>
       <title>Hotels | Air-bnd</title>
     </Head>
+    <Header></Header>
     <Box
       component="main"
       sx={{

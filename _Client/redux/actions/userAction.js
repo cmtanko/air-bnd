@@ -5,8 +5,6 @@ import absoluteUrl from "next-absolute-url";
 
 export const registerUser = (userData) => async (dispatch) => {
   try {
-    const { origin } = absoluteUrl(req);
-
     dispatch({ type: ACTION_TYPES.REGISTER_USER_REQUEST });
 
     const config = {
@@ -16,7 +14,7 @@ export const registerUser = (userData) => async (dispatch) => {
     };
 
     const { data } = await axios.post(
-      `${origin}/api/auth/register`,
+      `/api/auth/register`,
       userData,
       config
     );
@@ -53,9 +51,9 @@ export const loadUser = (req) => async (dispatch) => {
   }
 };
 
-export const updateProfile = (req, userData) => async (dispatch) => {
+export const updateProfile = (userData) => async (dispatch) => {
   try {
-    const { origin } = absoluteUrl(req);
+    // const { origin } = absoluteUrl(req);
 
     dispatch({ type: ACTION_TYPES.UPDATE_USER_PROFILE_REQUEST });
 
@@ -66,7 +64,7 @@ export const updateProfile = (req, userData) => async (dispatch) => {
     };
 
     const { data } = await axios.put(
-      `${origin}/api/account/update`,
+      `/api/account/update`,
       userData,
       config
     );
@@ -78,7 +76,7 @@ export const updateProfile = (req, userData) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: ACTION_TYPES.UPDATE_USER_PROFILE_FAIL,
-      payload: error?.response?.data?.message || "Error"
+      payload: error?.response?.data?.message || error
     });
   }
 };
