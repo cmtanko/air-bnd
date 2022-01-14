@@ -26,8 +26,8 @@ const Products = () => {
       </Head>
       <Header placeholder={placeholderString}></Header>
 
-      <main className="flex">
-        <section className="flex-grow pt-16 px-10">
+      <main className="">
+        <section className="pt-16 px-10">
           <p className="text-xs">
             300+ Stays - {range} - {guests} guests
           </p>

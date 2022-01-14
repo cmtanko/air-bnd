@@ -35,7 +35,7 @@ const RoomPage = () => {
   }
 
   return (
-    <Container>
+    <div>
       <Typography sx={{ mt: 1 }} variant="h4">
         Great holiday rentals {location ? "in" : ""} {location}
       </Typography>
@@ -59,7 +59,7 @@ const RoomPage = () => {
           onChange={handleChangePage}
         />
       </Box>
-    </Container>
+    </div>
   );
 };
 

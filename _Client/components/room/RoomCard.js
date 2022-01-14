@@ -9,13 +9,13 @@ export const RoomCard = ({ product: room }) => {
   const roomLink = `/rooms/${room._id}`;
   return (
     <Link href={roomLink} passHref>
-      <div className="flex py-7 border-b  cursor-pointer hover:opacity-80 hover:shadow-lg transition transform duration-200 ease-out first:border-t">
-        <div className="relative h-24 w-40 md:h-52 md:w-80 flex-shrink-0">
+      <div className="md:flex py-7 border-b cursor-pointer hover:opacity-80 hover:shadow-lg transition transform duration-200 ease-out first:border-t">
+        <div className="relative h-24 w-40 md:h-52 md:w-80 flex-shrink-0 ml-3">
           <Image
             className="rounded-2xl"
             src={room.images[0].url}
             layout="fill"
-            objectFit="cover"
+            objectFit="contain"
             alt={room.title}
           />
         </div>
