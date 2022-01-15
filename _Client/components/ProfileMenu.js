@@ -71,19 +71,19 @@ const ProfileMenu = ({ user }) => {
   return (
     <>
       <IconButton
-        size="large"
+        size="small"
         edge="end"
         aria-label="account of current user"
         aria-controls={menuId}
         aria-haspopup="true"
         onClick={handleProfileMenuOpen}
         color="inherit"
+        className="m-0 p-0"
       >
         <Avatar
           sx={{
-            height: 40,
-            width: 40,
-            ml: 1
+            height: 36,
+            width: 36,
           }}
           src="/static/images/avatars/avatar_1.png"
         >

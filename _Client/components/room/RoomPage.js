@@ -35,20 +35,14 @@ const RoomPage = () => {
   }
 
   return (
-    <Container maxWidth={false}>
+    <div>
       <Typography sx={{ mt: 1 }} variant="h4">
         Great holiday rentals {location ? "in" : ""} {location}
       </Typography>
-      <Box sx={{ pt: 3 }}>
-        <Grid container spacing={4}>
-          {rooms &&
-            rooms.map((room) => (
-              <Grid item key={room._id} lg={3} md={4} sm={6}>
-                <RoomCard product={room} />
-              </Grid>
-            ))}
-        </Grid>
-      </Box>
+      <div>
+        {rooms &&
+          rooms.map((room) => <RoomCard key={room._id} product={room} />)}
+      </div>
       <Box
         sx={{
           display: "flex",
@@ -65,7 +59,7 @@ const RoomPage = () => {
           onChange={handleChangePage}
         />
       </Box>
-    </Container>
+    </div>
   );
 };
 
