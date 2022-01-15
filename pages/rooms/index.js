@@ -18,7 +18,8 @@ const Products = () => {
   const formattedEndDate = endDate && format(new Date(endDate), "dd MMMM yy");
 
   const range = `${formattedStartDate} - ${formattedEndDate}`;
-  const placeholderString = startDate && `${location} | ${range} | ${guests}` || "";
+  const placeholderString =
+    (startDate && `${location} | ${range} | ${guests}`) || "";
   return (
     <>
       <Head>
@@ -28,11 +29,16 @@ const Products = () => {
 
       <main className="">
         <section className="pt-16 px-10">
-          <p className="text-xs">
-            300+ Stays - {range} - {guests} guests
-          </p>
-          <h1 className="text-3xl font-semibold mt-2 mb-6"> Stays in Mars</h1>
-
+          {location && (
+            <>
+              <p className="text-xs">
+                300+ Stays - {range} - {guests} guests
+              </p>
+              <h1 className="text-3xl font-semibold mt-2 mb-6">
+                Stays in {location}
+              </h1>
+            </>
+          )}
           <div className="hidden md:inline-flex mb-5 space-x-3 text-gray-800 whitespace-nowrap">
             <p className="button">Cancellation Flexibility</p>
             <p className="button">type of Place</p>

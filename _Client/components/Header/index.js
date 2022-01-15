@@ -69,7 +69,7 @@ const Header = ({ placeholder }) => {
   return (
     <header className="sticky top-0 z-50 grid grid-cols-3 bg-white shadow-md px-2 py-4 md:px-5">
       <div className="relative flex items-center h-10 cursor-pointer my-auto">
-        <Link href="/rooms" passHref>
+        <Link href="/" passHref>
           <Image
             className="header_icon"
             src="/static/mylogo.svg"
