@@ -5,8 +5,9 @@ import { useSelector } from "react-redux";
 import { Box, Container, Grid, Pagination, Typography } from "@mui/material";
 
 import { RoomCard } from "./RoomCard";
-import { ProductListToolbar } from "./RoomListToolbar";
 import { useRouter } from "next/router";
+import { ProductListToolbar } from "./RoomListToolbar";
+import Map from "../Map";
 
 const RoomPage = () => {
   const router = useRouter();
@@ -26,7 +27,7 @@ const RoomPage = () => {
   }, [rooms]);
 
   const handleChangePage = (event, newPage) => {
-    router.push(`/?page=${newPage}`);
+    router.push(`/rooms?page=${newPage}`);
   };
 
   let count = Math.ceil(roomsCount / resPerPage);
@@ -39,26 +40,26 @@ const RoomPage = () => {
       <Typography sx={{ mt: 1 }} variant="h4">
         Great holiday rentals {location ? "in" : ""} {location}
       </Typography>
-      <div>
-        {rooms &&
-          rooms.map((room) => <RoomCard key={room._id} product={room} />)}
-      </div>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          pt: 3
-        }}
-      >
-        <Pagination
-          color="primary"
-          page={page}
-          count={count}
-          variant="outlined"
-          shape="rounded"
-          onChange={handleChangePage}
-        />
-      </Box>
+      <main className="flex">
+        <section className="flex">
+          <div className="">
+            {rooms &&
+              rooms.map((room) => <RoomCard key={room._id} product={room} />)}
+            <Pagination
+              className="flex justify-center pt-4 pb-4"
+              color="primary"
+              page={page}
+              count={count}
+              variant="outlined"
+              shape="rounded"
+              onChange={handleChangePage}
+            />
+          </div>
+        </section>
+        <section className="hidden lg:inline-flex pl-2">
+          {rooms && rooms.length>0 && <Map />}
+        </section>
+      </main>
     </div>
   );
 };
