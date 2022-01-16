@@ -10,7 +10,7 @@ import { getRooms } from "../_Client/redux/actions/roomsAction";
 import CityMediumCard from "../_Client/components/city/CityMediumCard";
 import { DashboardLayout } from "../_Client/components/dashboard-layout";
 
-const Products = ({ cardData, exploreData }) => (
+const Products = ({ cardData, location }) => (
   <>
     <Head>
       <title>
@@ -24,7 +24,7 @@ const Products = ({ cardData, exploreData }) => (
       <section className="pt-6">
         <h2 className="text-4xl pb-5 font-semibold">Explore Nearby</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
-          {exploreData.map(({ img, distance, location }) => {
+          {location.map(({ img, distance, location }) => {
             return (
               <CityCard
                 key={location}
@@ -56,18 +56,18 @@ Products.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 export default Products;
 
 export async function getStaticProps() {
-  const exploreData = await fetch("https://links.papareact.com/pyp").then(
+  const cardData = await fetch("http://localhost:3000/api/suggestion").then(
     (res) => res.json()
   );
 
-  const cardData = await fetch("https://links.papareact.com/zp1").then((res) =>
-    res.json()
+  const location = await fetch("http://localhost:3000/api/location").then(
+    (res) => res.json()
   );
 
   return {
     props: {
       cardData,
-      exploreData
+      location
     }
   };
 }
