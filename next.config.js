@@ -9,6 +9,6 @@ module.exports = {
     MAP_BOX_ACCESS_TOKEN: process.env.MAP_BOX_ACCESS_TOKEN,
   },
   images: {
-    domains: ["res.cloudinary.com", "i.pinimg.com", "media.cntraveler.com", "news.airbnb.com", "links.papareact.com"]
+    domains: ["res.cloudinary.com", "i.pinimg.com", "media.cntraveler.com", "news.airbnb.com", "links.papareact.com", "a0.muscache.com", "images.pexels.com"]
   }
 };

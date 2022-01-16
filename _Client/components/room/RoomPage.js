@@ -57,7 +57,7 @@ const RoomPage = () => {
           </div>
         </section>
         <section className="hidden lg:inline-flex pl-2">
-          {rooms && rooms.length>0 && <Map />}
+          {rooms && rooms.length>0 && <Map rooms={rooms} />}
         </section>
       </main>
     </div>

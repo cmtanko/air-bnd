@@ -9,7 +9,7 @@ export const RoomCard = ({ product: room }) => {
   const roomLink = `/rooms/${room._id}`;
   return (
     <Link href={roomLink} passHref>
-      <div className="md:flex py-7 border-b cursor-pointer hover:opacity-80 hover:shadow-lg transition transform duration-200 ease-out first:border-t">
+      <div className="md:flex py-6 border-b cursor-pointer hover:opacity-80 hover:shadow-lg transition transform duration-200 ease-out first:border-t">
         <div className="relative h-24 w-40 md:h-52 md:w-80 flex-shrink-0 ml-3">
           <Image
             className="rounded-2xl"
@@ -19,7 +19,7 @@ export const RoomCard = ({ product: room }) => {
             alt={room.title}
           />
         </div>
-        <div className="flex flex-col flex-grow pl-5">
+        <div className="flex flex-col flex-grow pl-5 pr-5">
           <div className="flex justify-between">
             <p>{room.name}</p>
             <HeartIcon className="h-7 cursor-pointer" />
