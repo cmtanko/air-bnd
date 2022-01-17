@@ -56,11 +56,11 @@ Products.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 export default Products;
 
 export async function getStaticProps() {
-  const cardData = await fetch("https://airbnd-delta.vercel.app/api/suggestion").then(
+  const cardData = await fetch("https://links.papareact.com/zp1").then(
     (res) => res.json()
   );
 
-  const location = await fetch("https://airbnd-delta.vercel.app/api/location").then(
+  const location = await fetch("https://links.papareact.com/pyp").then(
     (res) => res.json()
   );
 
