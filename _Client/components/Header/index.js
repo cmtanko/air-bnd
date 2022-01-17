@@ -26,6 +26,7 @@ const Header = ({ placeholder }) => {
   const [guest, setGuest] = useState(1);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  const [searched, setSearched] = useState(false);
 
   const selectionRange = {
     startDate: startDate,
@@ -51,6 +52,8 @@ const Header = ({ placeholder }) => {
     } else {
       router.push("/rooms");
     }
+
+    setSearched(true);
   };
 
   const handleSelect = (ranges) => {
@@ -89,7 +92,10 @@ const Header = ({ placeholder }) => {
             value={location}
             placeholder={placeholder || "Start your search"}
             className="flex-grow pl-5 bg-transparent outline-none text-sm text-gray-600 placeholder-gray-400 w-full"
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={(e) => {
+              setSearched(false);
+              setLocation(e.target.value);
+            }}
           />
         </form>
         <SearchIcon
@@ -107,7 +113,7 @@ const Header = ({ placeholder }) => {
         </div>
       </div>
 
-      {location && (
+      {location && !searched && (
         <div className="flex flex-col col-span-3 mx-auto">
           <DateRangePicker
             ranges={[selectionRange]}

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
 import {
   Box,
   Button,
@@ -19,6 +20,7 @@ import {
   Item,
   Divider
 } from "@mui/material";
+import Link from "next/link";
 import DatePicker from "react-datepicker";
 import { RoomCard } from "./RoomCard";
 import { ProductListToolbar } from "./RoomListToolbar";
@@ -208,25 +210,60 @@ const RoomDetailsPage = () => {
               </Typography>
               <Divider />
               <Typography align="left" color="textPrimary" variant="body1">
-                {room.guestCapacity} Guests
+                <div className="flex">{room.guestCapacity} Guests</div>
               </Typography>
               <Typography align="left" color="textPrimary" variant="body1">
-                {room.numOfBeds} Beds
+                <div className="flex">{room.numOfBeds} Beds</div>
               </Typography>
               <Typography align="left" color="textPrimary" variant="body1">
-                {room.breakfast ? "√" : "X"} Breakfast
+                <div className="flex">
+                  {room.breakfast ? (
+                    <CheckCircleIcon className="h-5 w-5 text-green-500 mr-1" />
+                  ) : (
+                    <XCircleIcon className="h-5 w-5 text-red-500 mr-1" />
+                  )}{" "}
+                  Breakfast
+                </div>
               </Typography>
               <Typography align="left" color="textPrimary" variant="body1">
-                {room.internet ? "√" : "X"} Internet
+                <div className="flex">
+                  {room.internet ? (
+                    <CheckCircleIcon className="h-5 w-5 text-green-500 mr-1" />
+                  ) : (
+                    <XCircleIcon className="h-5 w-5 text-red-500 mr-1" />
+                  )}
+                  Internet
+                </div>
               </Typography>
               <Typography align="left" color="textPrimary" variant="body1">
-                {room.airConditioned ? "√" : "X"} Air Conditioned
+                <div className="flex">
+                  {room.airConditioned ? (
+                    <CheckCircleIcon className="h-5 w-5 text-green-500 mr-1" />
+                  ) : (
+                    <XCircleIcon className="h-5 w-5 text-red-500 mr-1" />
+                  )}{" "}
+                  Air Conditioned
+                </div>
               </Typography>
               <Typography align="left" color="textPrimary" variant="body1">
-                {room.petsAllowed ? "√" : "X"} Pets Allowed
+                <div className="flex">
+                  {room.petsAllowed ? (
+                    <CheckCircleIcon className="h-5 w-5 text-green-500 mr-1" />
+                  ) : (
+                    <XCircleIcon className="h-5 w-5 text-red-500 mr-1" />
+                  )}{" "}
+                  Pets Allowed
+                </div>
               </Typography>
               <Typography align="left" color="textPrimary" variant="body1">
-                {room.roomCleaning ? "√" : "X"} Room Cleaning
+                <div className="flex">
+                  {room.roomCleaning ? (
+                    <CheckCircleIcon className="h-5 w-5 text-green-500 mr-1" />
+                  ) : (
+                    <XCircleIcon className="h-5 w-5 text-red-500 mr-1" />
+                  )}{" "}
+                  Room Cleaning
+                </div>
               </Typography>
             </CardContent>
           </Card>
@@ -255,8 +292,10 @@ const RoomDetailsPage = () => {
                 minDate={new Date()}
                 excludeDates={excludedDates}
                 selectsRange
+                rangeColors={["#FD5B61"]}
                 inline
               />
+
               {available && (
                 <Typography align="left" color="textPrimary" variant="body1">
                   Room is available. Book Here
@@ -268,9 +307,11 @@ const RoomDetailsPage = () => {
                 </Typography>
               )}
               {available && !user && (
-                <Typography align="left" color="textPrimary" variant="body1">
-                  Login to Book
-                </Typography>
+                <Link href={"/login"} passHref>
+                  <button className="flex-grow bg-green-400 text-white p-2 border-5 rounded-md hover:bg-green-600 hover:shadow-lg  active:scale-90 transition duration-150 ">
+                    Login to Book
+                  </button>
+                </Link>
               )}
               {available && user && (
                 <Button
