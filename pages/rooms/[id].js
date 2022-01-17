@@ -31,16 +31,16 @@ export default RoomDetails;
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => {
   return async ({ req, params }) => {
-    const session = await getSession({ req });
-    console.warn(session);
-    if (!session) {
-      return {
-        redirect: {
-          destination: "/login",
-          permanent: false
-        }
-      };
-    }
+    // const session = await getSession({ req });
+    // console.warn(session);
+    // if (!session) {
+    //   return {
+    //     redirect: {
+    //       destination: "/login",
+    //       permanent: false
+    //     }
+    //   };
+    // }
 
     await store.dispatch(getRoomDetails(req, params.id));
   };
