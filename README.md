@@ -1,6 +1,6 @@
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/cmtanko)
 
-# Airbnd
+# Airbnd | NextJs
 
 Airbnd is a airbnb clone with almost same functionality, based on NextJs. Book your next trip with Airbnd.
 
