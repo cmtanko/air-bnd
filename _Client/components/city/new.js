@@ -16,8 +16,8 @@
 
         const FAV_IMAGE = {
             "STARRED": "/images/starred.png",
-            "UNSTARRED": "/images/unstarred.png",
-        }
+            "UNSTARRED": "/images/unstarred.png"
+        };
 
         function toggleFavorite (e) {
             const item = e.section.getItemAt(e.itemIndex);
@@ -27,7 +27,7 @@
 
             if (currentImage === FAV_IMAGE.UNSTARRED) {
                 currentFavoriteInformvVersions.add(e.itemId);
-                item.favIcon.image =FAV_IMAGE.STARRED;
+                item.favIcon.image = FAV_IMAGE.STARRED;
                 
             } else {
                 currentFavoriteInformvVersions.delete(e.itemId);
@@ -37,10 +37,14 @@
             // UPDATE THE LOCAL STORAGE BASED ON NEW FAVORITE LIST
             Ti.App.Properties.setList("favoriteInformVersions", Array.from(currentFavoriteInformvVersions));
             e.section.updateItemAt(e.itemIndex, item);
+            formService.refreshCollection();
         }
 
         function init () {
             $.tabFilter.setIndex(0);
+            $.tabFilter.setCallback(() => {
+                formService.refreshCollection();
+            });
 
             formService.refreshCollection();
             stopClickLoading();
@@ -52,6 +56,8 @@
         }
 
         function applyFilter (collection) {
+            const filterByStarredInformVersions = $.tabFilter.getIndex() === 1;
+
             return collection.filter(function (item) {
                 return item.get("status") === "CURRENT";
             }).map((item) => {
@@ -59,6 +65,11 @@
                 const itemIsFavorite = locallyStoredFavoriteInformVersions.has(item.get("id")) || false;
                 item.set("favoriteIcon", itemIsFavorite ? FAV_IMAGE.STARRED : FAV_IMAGE.UNSTARRED);
                 return item;
+            }).filter((newItem) => {
+                if (filterByStarredInformVersions) {
+                    return newItem.get("favoriteIcon") === FAV_IMAGE.STARRED;
+                }
+                return true;
             });
         }
 
