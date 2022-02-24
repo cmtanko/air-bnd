@@ -1,257 +1,246 @@
-(function (module) {
-    function OnsiteService () {
+(function (args, $, exports) {
+    args = args[0] || {};
+
+    function FormAddController (args) {
         let self = this;
-        const libUuid = require("vendor/uuid");
+        let formSource = args.source;
+        let moment = Alloy.Globals.moment;
+        let nav = Alloy.Globals.Services.getService("navigation");
+        let formService = Alloy.Globals.Services.getService("informformversion");
 
-        const TAP_MODE = {
-            IN: 1,
-            OUT: 0,
-            FAILED: -1
-        };
+        self.init = init;
+        self.cleanup = cleanup;
+        self.listClick = listClick;
+        self.applyFilter = applyFilter;
+        self.closeWindow = closeWindow;
 
-        self.isUserIn = isUserIn;
-        self.tapUserIn = tapUserIn;
-        self.tapUserOut = tapUserOut;
-        self.registerQRScan = registerQRScan;
-        self.getAccessPoint = getAccessPoint;
-        self.registerAccessPoint = registerAccessPoint;
+        const FAV_IMAGE = {
+            "STARRED": "/images/starred.png",
+            "UNSTARRED": "/images/unstarred.png",
+        }
 
-        function getNetworkController () {
-            return Alloy.Globals.Services.getService("networkcontroller");
+        function toggleFavorite (e) {
+            const item = e.section.getItemAt(e.itemIndex);
+            const currentImage = item && item.favIcon && item.favIcon.image || "";
+
+            let currentFavoriteInformvVersions = new Set(Ti.App.Properties.getList("favoriteInformVersions"));
+
+            if (currentImage === FAV_IMAGE.UNSTARRED) {
+                currentFavoriteInformvVersions.add(e.itemId);
+                item.favIcon.image =FAV_IMAGE.STARRED;
+                
+            } else {
+                currentFavoriteInformvVersions.delete(e.itemId);
+                item.favIcon.image = FAV_IMAGE.UNSTARRED;				
+            }
+
+            // UPDATE THE LOCAL STORAGE BASED ON NEW FAVORITE LIST
+            Ti.App.Properties.setList("favoriteInformVersions", Array.from(currentFavoriteInformvVersions));
+            e.section.updateItemAt(e.itemIndex, item);
+        }
+
+        function init () {
+            $.tabFilter.setIndex(0);
+
+            formService.refreshCollection();
+            stopClickLoading();
+        }
+
+        function closeWindow () {
+            Alloy.Globals.currentPage = formSource;
+            $.formAddWindow.close();
+        }
+
+        function applyFilter (collection) {
+            return collection.filter(function (item) {
+                return item.get("status") === "CURRENT";
+            }).map((item) => {
+                const locallyStoredFavoriteInformVersions = new Set(Ti.App.Properties.getList("favoriteInformVersions")) || new Set();
+                const itemIsFavorite = locallyStoredFavoriteInformVersions.has(item.get("id")) || false;
+                item.set("favoriteIcon", itemIsFavorite ? FAV_IMAGE.STARRED : FAV_IMAGE.UNSTARRED);
+                return item;
+            });
+        }
+
+        function listClick (e) {
+            const isFavoriteBtnClicked = e.bindId === "favIcon";
+            if (isFavoriteBtnClicked) {
+                toggleFavorite(e);
+                return;
+            }
+
+            if (!OS_ANDROID) {
+                closeWindow();
+            }
+            var timeOutTracker = setTimeout(function () {
+                var id = e.itemId;
+                listClickDebounce(id);
+                clearTimeout(timeOutTracker);
+            }, 10);
+        }
+
+        function OpenFormRecordForm (id) {
+            if (formService.hasDefinition(id)) {
+                createFormRecord(id);
+            } else {
+                formService
+                    .populateFormDefinition(id)
+                    .then(function (result) {
+                        createFormRecord(id);
+                    })
+                    .catch(function (e) {
+                        alert("Please connect to internet to load form");
+                    });
+            }
+        }
+        var listClickDebounce = nav.debounce(OpenFormRecordForm);
+
+        function startClickLoading () {
+            Alloy.Globals.loading.show("Loading", true);
+        }
+
+        function stopClickLoading () {
+            Alloy.Globals.loading.hide();
         }
 
         /**
-         * TAP USER IN/OUT IN GIVEN AREA
-         * @param {String} areaId
-         * @param {String} userId
-         * @returns
+         * Create new form record and then open edit widdpw
+         * @param id
          */
-        function registerQRScan (areaId, userId) {
-            return new Promise((resolve, reject) => {
-                getAccessPoint(areaId)
-                    .then((res) => {
-                        const accessPointId = res.id;
+        function createFormRecord (id) {
+            var progressWindow = Ti.UI.createWindow({
+                backgroundColor: "#88000000",
+                verticalAlign: "center",
+                exitOnClose: false
+            });
 
-                        isUserIn(areaId, userId)
-                            .then((isUserIn) => {
-                                if (isUserIn) {
-                                    tapUserOut(accessPointId, userId)
-                                        .then((res) => {
-                                            if (res.data.is_access_denied) {
-                                                resolve({ message: res.data.access_denied_reason, mode: TAP_MODE.FAILED });
-                                            }
-                                            resolve({ message: "Tapped Out", mode: TAP_MODE.OUT });
-                                        })
-                                        .catch((err) => {
-                                            reject(err);
-                                        });
-                                } else {
-                                    tapUserIn(accessPointId, userId)
-                                        .then((res) => {
-                                            if (res.data.is_access_denied) {
-                                                resolve({ message: res.data.access_denied_reason, mode: TAP_MODE.FAILED });
-                                            }
-                                            resolve({ message: "Tapped In", mode: TAP_MODE.IN });
-                                        })
-                                        .catch((err) => {
-                                            reject(err);
-                                        });
+            var pb = Ti.UI.createProgressBar({
+                backgroundColor: "#DDDDDD",
+                width: 250,
+                height: 100,
+                min: 0,
+                max: 10,
+                value: 1,
+                color: Alloy.Globals.colors.brownishGrey,
+                tintColor: Alloy.Globals.colors.desaturatedOrange,
+                message: "Creating record...",
+                font: {fontSize: 14, fontWeight: "bold"}
+            });
+            
+
+            setTimeout(() => {
+                progressWindow.add(pb);
+                progressWindow.open();
+            }, 0);
+
+            setTimeout(() => {
+                var uuid = require("vendor/uuid").v4();
+                var user = Alloy.Globals.UserSession.getUser();
+                var formConfig = formService.findById(id);
+    
+                var isDirectedFromLinkActionPage = !!args.actionId;
+                // IS REDIRECTED FROM ACTION EDIT PAGE
+                if (isDirectedFromLinkActionPage) {
+                    stopClickLoading();
+                    var timer = setTimeout(function () {
+                        closeWindow();
+                        Alloy.Globals.dispatcher.trigger("app:actionInformIntegrate", {
+                            hasUpdate: true,
+                            actionId: args.actionId,
+                            formVersionId: id,
+                            formName: formConfig.get("name")
+                        });
+                        clearTimeout(timer);
+                    }, 2000);
+                    return;
+                }
+    
+                var respondentId = getApproverIdAsNewRespondentId(formConfig);
+    
+                var form = {
+                    uuid: uuid,
+                    form_version_id: id,
+                    form_name: formConfig.get("name"),
+                    respondent_id: respondentId || user.id,
+                    created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+                    status: "NOT_STARTED",
+                    last_modified_at: moment().unix().toString(),
+                    modified_by: user.id,
+                    attachment_count: 0
+                };
+                if (pb) {
+                    pb.value += 2;
+                }
+                Alloy.Globals.Services.getService("informformrecord").create(form)
+                    .then(function () {
+                        if (pb) {
+                            pb.value = pb.max;
+                        }
+                    })
+                    .catch(function () {
+                        Alloy.Globals.dispatcher.trigger("app:InformFormRecordUpdated", {
+                            action: "add",
+                            number: 1
+                        });
+                    }).finally(function () {
+                        if (progressWindow) {
+                            progressWindow.close();
+                        }
+                        setTimeout(function () {
+                            closeWindow();
+                            nav.openWindow("formedit", {
+                                uuid: uuid,
+                                formVersionId: id,
+                                formRecordId: uuid,
+                                formIndex: 0,
+                                source: formSource
+                            }); 
+                        }, 10);
+                    });
+            }, 100);
+        }
+
+        /**
+         * UPDATE RESPONDENT ID IF FORM CONTAINS APPROVER ELEMENT WITH APPROVER ID
+         */
+        function getApproverIdAsNewRespondentId (formConfig) {
+            try {
+                var respondentId = null;
+                var formDefinition = JSON.parse(formConfig.get("definition"));
+                for (var i = 0; i < formDefinition.InformQuestionVersion.length; i++) {
+                    var question = formDefinition.InformQuestionVersion[i];
+                    if (question.type === "APPROVAL") { // Check for only approval elements
+                        var metadata = question.metadata && JSON.parse(question.metadata);
+                        if (!!metadata.options.conditional) { // Only if it is parent element and not conditional
+                            if (!metadata.options.conditional) {
+                                if (!!metadata && !!metadata.options && !!metadata.options["approver_id"]) {
+                                    respondentId = metadata.options["approver_id"];
+                                    break;
                                 }
-                            })
-                            .catch((err) => {
-                                reject(err);
-                            });
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    });
-            });
-        }
-
-        /**
-         * RETURNS IF THE USER HAS ALREADY TAPPED IN OR NOT
-         * @param {String} areaId
-         * @param {String} userId
-         * @returns
-         */
-        function isUserIn (areaId, userId) {
-            const networkController = getNetworkController();
-            Alloy.Globals.LogManager.info(`[ONSITE] Retriving tapped infor for user ${userId} in area ${areaId}`);
-
-            return new Promise((resolve, reject) => {
-                networkController
-                    .fetch(`/intranet/api/v1/areas/${areaId}/userstatus`)
-                    .then((result) => {
-                        const { data } = result;
-
-                        const userEventInfo = data.find((e) => e.userId === userId);
-
-                        if (userEventInfo) {
-                            Alloy.Globals.LogManager.info(`[ONSITE] User ${userId} tapped info: ${JSON.stringify(userEventInfo)}`);
-                            resolve(userEventInfo.inArea);
+                            } else {
+                                // IF CONDITIONAL ELEMENT, NO NEED TO CONSIDER AS IT WOULD BE HIDDEN 
+                            }
                         } else {
-                            // NO PREVIOUS EVENT LOG AVAILABLE, SAY FOR FIRST USERS
-                            Alloy.Globals.LogManager.error(`[ONSITE] Unable to retrieve user ${userId} tapped information for area ${areaId}`);
-                            resolve(false);
+                            if (!!metadata && !!metadata.options && !!metadata.options["approver_id"]) {
+                                respondentId = metadata.options["approver_id"];
+                                break;
+                            }
                         }
-                    })
-                    .catch(() => {
-                        Alloy.Globals.LogManager.error(`[ONSITE] Unable to retrieve tapped information for area ${areaId}`);
-                        reject(`Unable to retrieve tapped information for area ${areaId}`);
-                    });
-            });
+                    }
+                }
+                Alloy.Globals.LogManager.info("APPROVAL FORM ADD: getApproverIdAsNewRespondentId = " + respondentId);
+                return respondentId;
+            } catch (error) {
+                Alloy.Globals.LogManager.error("APPROVAL ERROR: " + JSON.stringify(error));
+            }
+
         }
 
-        /**
-         * TAP USER INTO THE SITE
-         * @param {String} accessPointId
-         * @param {String} userId
-         * @returns
-         */
-        function tapUserIn (accessPointId, userId) {
-            const networkController = getNetworkController();
-            return new Promise((resolve, reject) => {
-                networkController
-                    .post(
-                        `/intranet/api/v1/accesspoints/${accessPointId}/enter`,
-                        {
-                            uuid: libUuid.v4(),
-                            timestamp: Alloy.Globals.moment().format(),
-                            user: userId
-                        },
-                        {
-                            method: "POST"
-                        },
-                        true
-                    )
-                    .then((result) => {
-                        Alloy.Globals.LogManager.info(`[ONSITE] Tapped user ${userId} in`);
-
-                        resolve(result);
-                    })
-                    .catch(() => {
-                        Alloy.Globals.LogManager.error(`[ONSITE] Unable to tap user ${userId} in`);
-                        reject("Unable to tap user ${userId} in");
-                    });
-            });
-        }
-
-        /**
-         * TAP USER OUT OF THE SITE
-         * @param {String} accessPointId
-         * @param {String} userId
-         * @returns
-         */
-        function tapUserOut (accessPointId, userId) {
-            const networkController = getNetworkController();
-
-            return new Promise((resolve, reject) => {
-                networkController
-                    .post(
-                        `/intranet/api/v1/accesspoints/${accessPointId}/exit`,
-                        {
-                            uuid: libUuid.v4(),
-                            timestamp: Alloy.Globals.moment().format(),
-                            user: userId
-                        },
-                        {
-                            method: "POST"
-                        },
-                        true
-                    )
-                    .then((result) => {
-                        Alloy.Globals.LogManager.info(`[ONSITE] Tapped user ${userId} out`);
-
-                        resolve(result);
-                    })
-                    .catch(() => {
-                        Alloy.Globals.LogManager.error(`[ONSITE] Unable to tap user ${userId} out`);
-                        reject("Unable to tap user ${userId} out");
-                    });
-            });
-        }
-
-        /**
-         * GET QR CODE ACCESS POINT FOR GIVEN AREAID
-         * @param {String} areaId
-         * @returns promise
-         */
-        function getAccessPoint (areaId) {
-            Alloy.Globals.LogManager.info(`[ONSITE] Get Access point for area ${areaId}`);
-
-            const networkController = getNetworkController();
-
-            return new Promise((resolve, reject) => {
-                networkController
-                    .fetch(`/intranet/api/v1/areas/${areaId}`)
-                    .then((result) => {
-                        let accessPoints =
-              (result &&
-                result.data &&
-                result.data.accessPoints &&
-                result.data.accessPoints.data) ||
-              [];
-                        let qrAccessPoint = accessPoints.find((ap) => ap.name === "QR Access Point");
-
-                        if (qrAccessPoint) {
-                            Alloy.Globals.LogManager.info(`[ONSITE] Access Point = ${qrAccessPoint.id}`);
-                            resolve(qrAccessPoint);
-                        } else {
-                            // REGISTER AN ACCESS POINT FOR THAT AREA
-                            Alloy.Globals.LogManager.error(`[ONSITE] No QR Code Access Point available for area ${areaId}`);
-
-                            registerAccessPoint(areaId)
-                                .then((res) => {
-                                    Alloy.Globals.LogManager.info(`[ONSITE] Access Point = ${res.data.id}`);
-                                    resolve(res.data);
-                                })
-                                .catch((err) => {
-                                    reject(err);
-                                });
-                        }
-                    })
-                    .catch((error) => {
-                        Alloy.Globals.LogManager.error(`[ONSITE] Unable to retrieve area ${areaId}`);
-
-                        reject(`Unable to retrieve area ${areaId}`);
-                    });
-            });
-        }
-
-        /**
-         * REGISTER A NEW ACCESS POINT FOR GIVEN AREA
-         * @param {String} areaId
-         */
-        function registerAccessPoint (areaId) {
-            const networkController = getNetworkController();
-            Alloy.Globals.LogManager.info(`[ONSITE] Registering new access point for area ${areaId}`);
-
-            return new Promise((resolve, reject) => {
-                networkController
-                    .post(
-                        `/intranet/api/v1/areas/${areaId}/accesspoints`,
-                        {
-                            deviceId: libUuid.v4(),
-                            name: "QR Access Point",
-                            description: "Access Point for QR Code entry"
-                        },
-                        {
-                            method: "POST"
-                        },
-                        true
-                    )
-                    .then((result) => {
-                        Alloy.Globals.LogManager.info(`[ONSITE] New Access point registered for area ${areaId}`);
-                        resolve(result);
-                    })
-                    .catch(() => {
-                        Alloy.Globals.LogManager.error(`[ONSITE] Unable to register an access point for area ${areaId}`);
-
-                        reject(`Unable to register an access point for area ${areaId}`);
-                    });
-            });
+        function cleanup () {
+            $.destroy();
+            $.off();
         }
     }
 
-    module.exports = new OnsiteService();
-})(module);
+    _.extend(exports, new FormAddController(args));
+})(arguments, $, exports);
